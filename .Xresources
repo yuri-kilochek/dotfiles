@@ -1,0 +1,14 @@
+! enable colors
+XTerm*termName: xterm-256color
+XTerm*background: #1F1F1F
+XTerm*foreground: #E0E0E0
+
+! enable cursor blinking
+XTerm*cursorBlink: true
+
+! enable UTF-8
+XTerm*locale: true
+
+! set huge scroll buffer size
+XTerm*saveLines: 16384
+
