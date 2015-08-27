@@ -1,37 +1,31 @@
-local gears = require("gears")
-local awful = require("awful")
-awful.rules = require("awful.rules")
-local wibox = require("wibox")
-local beautiful = require("beautiful")
 local naughty = require("naughty")
 
--- Handle runtime errors after startup
 do
     local in_error = false
-    awesome.connect_signal("debug::error", function (text)
-        -- Make sure we don't go into an endless error loop
+    awesome.connect_signal("debug::error", function(message)
         if in_error then
             return
         end
         in_error = true
         naughty.notify{
             preset = naughty.config.presets.critical,
-            text = text,
+            text = message,
         }
         in_error = false
     end)
 end
---]]
+
+local gears = require("gears")
+local awful = require("awful")
+awful.rules = require("awful.rules")
+local wibox = require("wibox")
+local beautiful = require("beautiful")
 
 -- Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.border_width = 3
 
--- Default META.
--- Usually, Mod4 is the key with a logo between Control and Alt.
--- If you do not like this or do not have such a key,
--- I suggest you to remap Mod4 to another key using xmodmap or other tools.
--- However, you can use another modifier like Mod1, but it may interact with others.
 ALT = "Mod1"
 META = "Mod4"
 CTRL = "Control"
@@ -40,48 +34,25 @@ SHIFT = "Shift"
 awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
 
 root_keys = awful.util.table.join(
-    awful.key({ META }, "`", function ()
+    awful.key({ META }, "`", function()
         awful.util.spawn("dmenu_run")
     end),
-    awful.key({ META }, "l", function ()
+    awful.key({ META }, "l", function()
         awful.util.spawn("xscreensaver-command --lock")
     end),
-    awful.key({ META }, "t", function ()
+    awful.key({ META }, "t", function()
         awful.util.spawn("xterm")
     end), 
-    awful.key({ META }, "f", function ()
+    awful.key({ META }, "f", function()
         awful.util.spawn("Thunar")
     end),
-    awful.key({ META }, "b", function ()
+    awful.key({ META }, "b", function()
         awful.util.spawn("chromium")
-    end) 
-)
-
-for i = 1, 9 do
-    root_keys = awful.util.table.join(root_keys,
-        awful.key({ META }, tostring(i), function()
-            local tags = awful.tag.gettags(1)
-            awful.tag.viewonly(tags[i])
-        end)
-    )
-end
-
-root.keys(root_keys)
-
-
-client_buttons = awful.util.table.join(
-    awful.button({}, 1, function (c)
-        client.focus = c
-        c:raise()
     end),
-    awful.button({}, 3, function (c)
-        client.focus = c
-        c:raise()
+    awful.key({ META, SHIFT }, "b", function()
+        awful.util.spawn("chromium --incognito")
     end),
-    awful.button({ META }, 1, awful.mouse.client.move),
-    awful.button({ META }, 3, awful.mouse.client.resize)
-)
-
+{})
 
 client_keys = awful.util.table.join(
     awful.key({ META }, "Escape", function(c)
@@ -96,41 +67,59 @@ client_keys = awful.util.table.join(
 
         c:kill()
     end),
-    awful.key({ META }, "m", function(c)
-        c.maximized_horizontal = not c.maximized_horizontal
-        c.maximized_vertical = not c.maximized_vertical
-    end)
-)
+{})
 
-for _, key in ipairs{'Left', 'Right', 'Up', 'Down'} do
-    local direction = key:lower()
+for i = 1, #awful.tag.gettags(1) do
+    root_keys = awful.util.table.join(root_keys,
+        awful.key({ META }, tostring(i), function()
+            local t = awful.tag.gettags(1)[i]
+            awful.tag.viewonly(t)
+        end),
+    {})
+    client_keys = awful.util.table.join(client_keys,
+        awful.key({ META, CTRL }, tostring(i), function(c)
+            local t = awful.tag.gettags(1)[i]
+            awful.tag.viewonly(t)
+            awful.client.movetotag(t, c)
+            client.focus = c
+        end),
+    {})
+end
+
+for key, direction in pairs{
+    ['Left'] = 'left',
+    ['Right'] = 'right',
+    ['Up'] = 'up',
+    ['Down'] = 'down',
+} do
     client_keys = awful.util.table.join(client_keys,
         awful.key({ META }, key, function(c)
             awful.client.focus.bydirection(direction, c)
-            client.focus:raise()
         end),
         awful.key({ META, CTRL }, key, function(c)
             awful.client.swap.bydirection(direction, c)
-        end)
-    )
+        end),
+    {})
 end
     
-for i = 1, 9 do
-    client_keys = awful.util.table.join(client_keys,
-        awful.key({ META, CTRL }, tostring(i), function(c)
-            local tags = awful.tag.gettags(1)
-            awful.client.movetotag(tags[i], c)
-            awful.tag.viewonly(tags[i])
-        end)
-    )
-end
+client_buttons = awful.util.table.join(
+    awful.button({}, 1, function(c)
+        client.focus = c
+    end),
+    awful.button({}, 3, function(c)
+        client.focus = c
+    end),
+    awful.button({ META }, 1, awful.mouse.client.move),
+    awful.button({ META }, 3, awful.mouse.client.resize),
+{})
+
+root.keys(root_keys)
 
 awful.rules.rules = {
     { 
         rule = {},
         properties = {
             size_hints_honor = false,
-            border_width = beautiful.border_width,
             border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
             raise = true,
@@ -140,16 +129,60 @@ awful.rules.rules = {
     },
 }
 
--- Signal function to execute when a new client appears.
-client.connect_signal("manage", function(c, startup)
-    if not startup then
-        if not c.size_hints.user_position and not c.size_hints.program_position then
-            awful.placement.no_overlap(c)
-            awful.placement.no_offscreen(c)
+do
+    local tag_focus = {}
+    tag.connect_signal('property::selected', function(t)
+        if t.selected then
+            if tag_focus[t] then
+                client.focus = tag_focus[t]
+            else
+                local tcs = t:clients()
+                if #tcs > 0 then
+                    client.focus = tcs[1]
+                end
+            end
+        else
+            tag_focus[t] = client.focus
         end
+    end)
+end
+
+client.connect_signal('tagged', function(c, t)
+    local tcs = t:clients()
+    if #tcs == 2 then
+        for _, c in ipairs(tcs) do
+            c.border_width = beautiful.border_width
+        end
+    elseif #tcs > 2 then
+        c.border_width = beautiful.border_width
     end
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
---]]
+client.connect_signal('untagged', function(c, t)
+    c.border_width = 0
+    local tcs = t:clients()
+    if #tcs == 1 then
+        tcs[1].border_width = 0
+    end
+    --[[
+    local has_focused = false;
+    for _, cc in ipairs(tcs) do
+        if cc == client.focus then
+            has_focused = true
+            break
+        end
+    end
+    if not has_focused and #tcs > 0 then
+        client.focus = tcs[1]
+    end
+    --]]
+end)
+
+client.connect_signal("focus", function(c)
+    c.border_color = beautiful.border_focus
+end)
+
+client.connect_signal("unfocus", function(c)
+    c.border_color = beautiful.border_normal
+end)
+
