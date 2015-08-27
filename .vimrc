@@ -52,5 +52,5 @@ set t_vb=
 
 " disable backup files
 set nobackup
-
+set nowritebackup
 
