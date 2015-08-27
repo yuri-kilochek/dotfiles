@@ -1,7 +1,7 @@
 ! enable colors
 XTerm*termName: xterm-256color
-XTerm*background: #1F1F1F
-XTerm*foreground: #E0E0E0
+XTerm*background: #111111
+XTerm*foreground: #EEEEEE
 
 ! enable cursor blinking
 XTerm*cursorBlink: true
