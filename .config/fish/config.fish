@@ -5,8 +5,36 @@ if status --is-login
     end
 end
 
-# keep prompt at bottom
-function _keep_prompt_at_bottom --on-signal WINCH
-    tput cup $LINES
+function __drop_prompt
+    for _ in (seq 100)
+        echo
+    end
 end
 
+function clear --wraps=clear
+    command clear
+    __drop_prompt
+end
+
+__drop_prompt
+
+function fish_prompt
+    set -l last_status $status
+    
+    echo
+    echo '[' $USER@(hostname) ']' (prompt_pwd)
+    echo '> '
+
+    return $last_status
+end
+
+function __clear_statusline --on-event fish_preexec
+    set -l last_status $status
+    
+    tput cuu1
+    tput cuu1
+    tput dl1
+    tput cud1
+
+    return $last_status
+end
