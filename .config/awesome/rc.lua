@@ -18,10 +18,7 @@ end
 local beautiful = require("beautiful")
 beautiful.init("~/.config/awesome/theme.lua")
 
-local gears = require("gears")
 local awful = require("awful")
-awful.rules = require("awful.rules")
-local wibox = require("wibox")
 
 ALT = "Mod1"
 META = "Mod4"
@@ -123,23 +120,22 @@ client_buttons = awful.util.table.join(
 
 root.keys(root_keys)
 
-awful.rules.rules = {
-    { 
-        rule = {},
-        properties = {
-            size_hints_honor = false,
-            border_color = beautiful.border_color,
-            focus = awful.client.focus.filter,
-            raise = true,
-            keys = client_keys,
-            buttons = client_buttons,
-        },
-    },
-}
+client.connect_signal('manage', function(c, startup)
+    c.size_hints_honor = false
+
+    c:keys(client_keys)
+    c:buttons(client_buttons)
+
+    if awful.client.focus.filter(c) then
+        client.focus = c
+    end
+end)
 
 client.connect_signal('tagged', function(c, t)
     local tcs = t:clients()
-    if #tcs == 2 then
+    if #tcs == 1 then
+        c.border_width = 0
+    elseif #tcs == 2 then
         for _, c in ipairs(tcs) do
             c.border_width = beautiful.border_width
         end
@@ -149,8 +145,8 @@ client.connect_signal('tagged', function(c, t)
 end)
 
 client.connect_signal('untagged', function(c, t)
-    c.border_width = 0
     local tcs = t:clients()
+
     if #tcs == 1 then
         tcs[1].border_width = 0
     end
