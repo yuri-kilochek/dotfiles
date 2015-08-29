@@ -121,6 +121,7 @@ client_buttons = awful.util.table.join(
 root.keys(root_keys)
 
 client.connect_signal('manage', function(c, startup)
+    c.maximized = false
     c.size_hints_honor = false
 
     c:keys(client_keys)
