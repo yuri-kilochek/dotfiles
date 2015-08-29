@@ -9,6 +9,10 @@ XTerm*cursorBlink: true
 ! enable UTF-8
 XTerm*locale: true
 
+! use TrueType Font
+XTerm*faceName: Sans Mono 
+XTerm*faceSize: 10
+
 ! set huge scroll buffer size
 XTerm*saveLines: 16384
 
