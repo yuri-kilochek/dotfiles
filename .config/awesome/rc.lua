@@ -27,14 +27,17 @@ SHIFT = "Shift"
 
 awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
 
+local controller_pids = {}
+
 root_keys = awful.util.table.join(
-    awful.key({ META }, "`", function()
-        awful.util.spawn("dmenu_run")
-    end),
     awful.key({ META }, "l", function()
         awful.util.spawn("xscreensaver-command --lock")
     end),
     awful.key({ META }, "t", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/time')
+        controller_pids[pid] = true
+    end), 
+    awful.key({ META, SHIFT }, "t", function()
         awful.util.spawn("xterm")
     end), 
     awful.key({ META }, "f", function()
@@ -63,30 +66,37 @@ client_keys = awful.util.table.join(
     end),
 {})
 
-local tag_focus = {}
+local function get_last_focused(tag, screen_no)
+    return nil
+end
 
 for i = 1, #awful.tag.gettags(1) do
     root_keys = awful.util.table.join(root_keys,
         awful.key({ META }, tostring(i), function()
-            local old = awful.tag.selected(1)
-            tag_focus[old] = client.focus
-
-            local new = awful.tag.gettags(1)[i]
-            awful.tag.viewonly(new)
-            if tag_focus[new] ~= nil then
-                client.focus, tag_focus[new] = tag_focus[new], nil
+            local t = awful.tag.gettags(1)[i]
+            awful.tag.viewonly(t)
+            local i = 0
+            while true do
+                local c = awful.client.focus.history.get(1, i)
+                if c == nil then
+                    return
+                end
+                for _, tt in ipairs(c:tags()) do
+                    if t == tt then
+                        client.focus = c
+                        return
+                    end
+                end
+                i = i + 1
             end
         end),
     {})
     client_keys = awful.util.table.join(client_keys,
         awful.key({ META, ALT }, tostring(i), function(c)
-            local old = awful.tag.selected(1)
-            tag_focus[old] = old:clients()[1]
-
-            local new = awful.tag.gettags(1)[i]
-            awful.tag.viewonly(new)
-            awful.client.movetotag(new, c)
-            client.focus, tag_focus[new] = c, nil
+            local t = awful.tag.gettags(1)[i]
+            awful.tag.viewonly(t)
+            awful.client.movetotag(t, c)
+            client.focus = c
         end),
     {})
 end
@@ -121,11 +131,39 @@ client_buttons = awful.util.table.join(
 root.keys(root_keys)
 
 client.connect_signal('manage', function(c, startup)
-    c.maximized = false
-    c.size_hints_honor = false
+    local keys = client_keys
+    local buttons = client_buttons
 
-    c:keys(client_keys)
-    c:buttons(client_buttons)
+    c.maximized = false
+
+    if controller_pids[c.pid] then
+        controller_pids[c.pid] = nil
+
+        awful.client.floating.set(c, true)
+        c.ontop = true
+        c:connect_signal('property::geometry', function()
+            local g = c:geometry()
+            c:geometry{
+                width = g.width,
+                height = g.height,
+                x = screen[c.screen].geometry.width/2 - g.width/2,
+                y = screen[c.screen].geometry.height/2 - g.height/2,
+            }
+        end)
+        keys = awful.util.table.join(keys,
+            awful.key({}, 'Escape', function(c)
+                c:kill()
+            end),
+        {})
+        c:connect_signal('unfocus', function()
+            c:kill()
+        end)
+    else
+        c.size_hints_honor = false
+    end
+
+    c:keys(keys)
+    c:buttons(buttons)
 
     if awful.client.focus.filter(c) then
         client.focus = c
@@ -170,11 +208,11 @@ client.connect_signal('untagged', function(c, t)
     end
 end)
 
-client.connect_signal("focus", function(client)
-    client.border_color = beautiful.border_focus_color
+client.connect_signal("focus", function(c)
+    c.border_color = beautiful.border_focus_color
 end)
 
-client.connect_signal("unfocus", function(client)
-    client.border_color = beautiful.border_color
+client.connect_signal("unfocus", function(c)
+    c.border_color = beautiful.border_color
 end)
 
