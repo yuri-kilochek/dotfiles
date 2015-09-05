@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 tput civis
-printf $'\e[8;3;100t'
+printf $'\e[8;3;19t'
 while true; do
     #       YYYY-MM-DD hh:mm:ss
     printf '     %s\n' $(date "+%B")
