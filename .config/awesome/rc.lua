@@ -79,7 +79,7 @@ for i = 1, #awful.tag.gettags(1) do
         end),
     {})
     client_keys = awful.util.table.join(client_keys,
-        awful.key({ META, CTRL }, tostring(i), function(c)
+        awful.key({ META, ALT }, tostring(i), function(c)
             local old = awful.tag.selected(1)
             tag_focus[old] = old:clients()[1]
 
@@ -101,7 +101,7 @@ for key, direction in pairs{
         awful.key({ META }, key, function(c)
             awful.client.focus.bydirection(direction, c)
         end),
-        awful.key({ META, CTRL }, key, function(c)
+        awful.key({ META, ALT }, key, function(c)
             awful.client.swap.bydirection(direction, c)
         end),
     {})
