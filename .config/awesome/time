@@ -1,6 +1,7 @@
 #!/usr/bin/sh
 
 tput civis
+stty -echo
 printf $'\e[8;3;19t'
 while true; do
     #       YYYY-MM-DD hh:mm:ss
