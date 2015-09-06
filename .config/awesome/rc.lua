@@ -191,7 +191,7 @@ end)
 client.connect_signal('untagged', function(c, t)
     local tcs = t:clients()
 
-    if #tcs == 1 then
+    if #tcs == 1 and not awful.client.floating.get(tcs[1]) then
         tcs[1].border_width = 0
     end
 
