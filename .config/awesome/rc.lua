@@ -171,6 +171,11 @@ client.connect_signal('manage', function(c, startup)
 end)
 
 client.connect_signal('tagged', function(c, t)
+    if controller_pids[c.pid] then
+        c.border_width = beautiful.border_width
+        return
+    end
+
     local tcs = t:clients()
     if #tcs == 1 then
         c.border_width = 0
