@@ -10,7 +10,7 @@ move_top_left() {
     tput cup 0
 }
 
-shape_of() (
+get_shape() (
     lines=0
     columns=0
     while read -r line; do
@@ -24,4 +24,9 @@ shape_of() (
 
 reshape() {
     printf $'\e[8;%d;%dt' $1 $2
+}
+
+reshape_and_print() {
+    reshape $(echo "$1" | get_shape)
+    printf '%s' "$1"
 }

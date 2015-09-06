@@ -9,7 +9,7 @@ entries=(
     'f' 'File Manager'      'Thunar'
 )
 
-print_menu() (
+menu() (
     i=0
     while [ $i -lt ${#entries[@]} ]; do
         key=${entries[i]}
@@ -24,9 +24,7 @@ print_menu() (
 
 hide_cursor
 disable_echo
-menu=$(print_menu)
-reshape $(echo "$menu" | shape_of)
-printf '%s' "$menu"
+reshape_and_print "$(menu)" 
 while read -rsn1 k; do
     read -t 0.0001 -rsn1 kk && k+=$kk
     read -t 0.0001 -rsn1 kk && k+=$kk
