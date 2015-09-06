@@ -1,0 +1,51 @@
+#!/usr/bin/sh
+
+source "$(dirname $0)"/common.sh
+
+entries=(
+    't' 'Terminal'          'xterm'
+    'b' 'Browser'           'chromium'
+    'B' 'Incognito Browser' 'chromium --incognito'
+    'f' 'File Manager'      'Thunar'
+)
+
+print_menu() (
+    i=0
+    while [ $i -lt ${#entries[@]} ]; do
+        key=${entries[i]}
+        i=$(expr $i + 1)
+        name=${entries[i]}
+        i=$(expr $i + 1)
+        cmd=${entries[i]}
+        i=$(expr $i + 1)
+        printf '%s - %s\n' "$key" "$name"
+    done
+)
+
+hide_cursor
+disable_echo
+menu=$(print_menu)
+reshape $(echo "$menu" | shape_of)
+printf '%s' "$menu"
+while read -rsn1 k; do
+    read -t 0.0001 -rsn1 kk && k+=$kk
+    read -t 0.0001 -rsn1 kk && k+=$kk
+    read -t 0.0001 -rsn1 kk && k+=$kk
+    read -t 0.0001 -rsn1 kk && k+=$kk
+    read -t 0.0001 -rsn1 kk && k+=$kk
+
+    i=0
+    while [ $i -lt ${#entries[@]} ]; do
+        key=${entries[i]}
+        i=$(expr $i + 1)
+        name=${entries[i]}
+        i=$(expr $i + 1)
+        cmd=${entries[i]}
+        i=$(expr $i + 1)
+        if [ "$key" = "$k" ]; then
+            ($cmd &) &
+            sleep 60
+            exit
+        fi
+    done
+done
