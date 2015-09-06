@@ -134,10 +134,8 @@ client.connect_signal('manage', function(c, startup)
 
     if controller_pids[c.pid] then
         controller_pids[c.pid] = nil
-
-        awful.client.floating.set(c, true)
-        c.ontop = true
-        c:connect_signal('property::geometry', function()
+        
+        local function fix_geometry()
             local g = c:geometry()
             c:geometry{
                 width = g.width,
@@ -145,15 +143,19 @@ client.connect_signal('manage', function(c, startup)
                 x = screen[c.screen].geometry.width/2 - g.width/2,
                 y = screen[c.screen].geometry.height/2 - g.height/2,
             }
+        end
+        c:connect_signal('property::geometry', fix_geometry)
+        c:connect_signal('property::screen', fix_geometry)
+
+        c:connect_signal('unfocus', function()
+            c:kill()
         end)
+
         keys = awful.util.table.join(keys,
             awful.key({}, 'Escape', function(c)
                 c:kill()
             end),
         {})
-        c:connect_signal('unfocus', function()
-            c:kill()
-        end)
     else
         c.size_hints_honor = false
     end
@@ -168,6 +170,8 @@ end)
 
 client.connect_signal('tagged', function(c, t)
     if controller_pids[c.pid] then
+        awful.client.floating.set(c, true)
+        c.ontop = true
         c.border_width = beautiful.border_width
         return
     end
