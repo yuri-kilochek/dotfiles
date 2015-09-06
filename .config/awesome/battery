@@ -1,0 +1,14 @@
+#!/usr/bin/sh
+
+tput civis
+stty -echo
+printf $'\e[8;2;8t'
+while true; do
+    S=$(acpi --battery)
+    A=(${S//%/ })
+    #       hh:mm:ss
+    printf '%s%%\n' ${A[3]}
+    printf '%s' ${A[5]}
+    sleep 1
+    tput cup 0
+done

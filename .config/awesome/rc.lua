@@ -44,6 +44,10 @@ root_keys = awful.util.table.join(
         awful.util.spawn("Thunar")
     end),
     awful.key({ META }, "b", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
+        controller_pids[pid] = true
+    end),
+    awful.key({ META, SHIFT }, "b", function()
         awful.util.spawn("chromium")
     end),
     awful.key({ META, SHIFT }, "b", function()
