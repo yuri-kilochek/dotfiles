@@ -30,6 +30,10 @@ awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.ti
 local controller_pids = {}
 
 root_keys = awful.util.table.join(
+    awful.key({ META }, "r", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/run')
+        controller_pids[pid] = true
+    end),
     awful.key({ META }, "l", function()
         awful.util.spawn("xscreensaver-command --lock")
     end),
@@ -37,21 +41,9 @@ root_keys = awful.util.table.join(
         local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/time')
         controller_pids[pid] = true
     end), 
-    awful.key({ META, SHIFT }, "t", function()
-        awful.util.spawn("xterm")
-    end), 
-    awful.key({ META }, "f", function()
-        awful.util.spawn("Thunar")
-    end),
     awful.key({ META }, "b", function()
         local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
         controller_pids[pid] = true
-    end),
-    awful.key({ META, SHIFT }, "b", function()
-        awful.util.spawn("chromium")
-    end),
-    awful.key({ META, SHIFT }, "b", function()
-        awful.util.spawn("chromium --incognito")
     end),
 {})
 
@@ -165,8 +157,6 @@ client.connect_signal('manage', function(c, startup)
     local keys = client_keys
     local buttons = client_buttons
 
-    c.maximized = false
-
     if controller_pids[c.pid] then
         controller_pids[c.pid] = nil
         
@@ -203,32 +193,40 @@ client.connect_signal('manage', function(c, startup)
     end
 end)
 
+local function remove_floating(cs)
+    local i = 1
+    while i <= #cs do
+        if awful.client.floating.get(cs[i]) or controller_pids[cs[i].pid] then
+            table.remove(cs, i)
+        else
+            i = i + 1
+        end
+    end
+end
+
 client.connect_signal('tagged', function(c, t)
     if controller_pids[c.pid] then
+        c.maximized = false
         awful.client.floating.set(c, true)
         c.ontop = true
         c.border_width = beautiful.border_width
-        return
     end
 
     local tcs = t:clients()
+
+    remove_floating(tcs)
+
     if #tcs == 1 then
-        c.border_width = 0
-    elseif #tcs == 2 then
+        tcs[1].border_width = 0
+    else
         for _, c in ipairs(tcs) do
             c.border_width = beautiful.border_width
         end
-    elseif #tcs > 2 then
-        c.border_width = beautiful.border_width
     end
 end)
 
 client.connect_signal('untagged', function(c, t)
     local tcs = t:clients()
-
-    if #tcs == 1 and not awful.client.floating.get(tcs[1]) then
-        tcs[1].border_width = 0
-    end
 
     for _, c in ipairs(tcs) do
         if c == client.focus then
@@ -236,6 +234,12 @@ client.connect_signal('untagged', function(c, t)
         end
     end
     
+    remove_floating(tcs)
+
+    if #tcs == 1 then
+        tcs[1].border_width = 0
+    end
+
     -- focus previous client in focus history that is in this tag
     for i = 0, #client.get(1) - 1 do
         local c = awful.client.focus.history.get(1, i)
