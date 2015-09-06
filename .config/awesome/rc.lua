@@ -101,10 +101,6 @@ client_keys = awful.util.table.join(
     end),
 {})
 
-local function get_last_focused(tag, screen_no)
-    return nil
-end
-
 for i = 1, #awful.tag.gettags(1) do
     root_keys = awful.util.table.join(root_keys,
         awful.key({ META }, tostring(i), function()
