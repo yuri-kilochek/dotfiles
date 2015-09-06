@@ -9,9 +9,7 @@ state() {
 hide_cursor
 disable_echo
 while true; do
-    text=$(state)
-    reshape $(echo "$text" | shape_of)
-    printf '%s' "$text"
+    reshape_and_print "$(state)" 
     sleep 0.02
     move_top_left
 done
