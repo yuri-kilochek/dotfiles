@@ -27,7 +27,6 @@ while true; do
     while read -r line; do
         lines=$(expr $lines + 1)
         if [ ${#line} -gt $columns ]; then
-            echo '%'
             columns=${#line}
         fi
     done <<< "$text" 
