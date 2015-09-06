@@ -1,13 +1,17 @@
 #!/usr/bin/sh
 
-tput civis
-stty -echo
-printf $'\e[8;3;19t'
+source "$(dirname $0)"/common.sh
+
+state() {
+    date $'+     %B\n%Y-%m-%d %H:%M:%S\n        %A'
+}
+
+hide_cursor
+disable_echo
 while true; do
-    #       YYYY-MM-DD hh:mm:ss
-    printf '     %s\n' $(date "+%B")
-    printf '%s %s\n' $(date "+%Y-%m-%d") $(date "+%H:%M:%S")
-    printf '        %s' $(date "+%A")
-    sleep 0.1
-    tput cup 0
+    text=$(state)
+    reshape $(echo "$text" | shape_of)
+    printf '%s' "$text"
+    sleep 0.02
+    move_top_left
 done
