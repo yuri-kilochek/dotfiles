@@ -6,6 +6,8 @@ state() {
     A=($S)
     if [ "${A[2]}" = 'Unknown' ]; then
         printf '%s' "${A[3]}"
+    elif [ "${A[2]}" = 'Full' ]; then
+        printf '%s, connected to charger, full' "${A[3]}"
     elif [ "${A[2]}" = 'Discharging' ]; then
         printf '%s, discharging, %s until empty' "${A[3]}" "${A[4]}"
     else
