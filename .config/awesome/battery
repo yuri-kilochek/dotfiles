@@ -1,14 +1,36 @@
 #!/usr/bin/sh
 
+state() {
+    S=$(acpi --battery)
+    S=${S//,/ }
+    A=($S)
+    if [ "${A[2]}" = 'Unknown' ]; then
+        printf '%s' "${A[3]}"
+    elif [ "${A[2]}" = 'Discharging' ]; then
+        printf '%s, discharging, %s until empty' "${A[3]}" "${A[4]}"
+    else
+        if [ "${A[4]}" = 'charging' ]; then
+            A[4]='??:??:??'
+        fi
+        printf '%s, charging, %s until full' "${A[3]}" "${A[4]}" 
+    fi
+}
+
 tput civis
 stty -echo
-printf $'\e[8;2;8t'
 while true; do
-    S=$(acpi --battery)
-    A=(${S//%/ })
-    #       hh:mm:ss
-    printf '%s%%\n' ${A[3]}
-    printf '%s' ${A[5]}
+    text=$(state) 
+    lines=0
+    columns=0
+    while read -r line; do
+        lines=$(expr $lines + 1)
+        if [ ${#line} -gt $columns ]; then
+            echo '%'
+            columns=${#line}
+        fi
+    done <<< "$text" 
+    printf $'\e[8;%d;%dt' $lines $columns
+    printf '%s' "$text"
     sleep 1
     tput cup 0
 done
