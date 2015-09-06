@@ -46,11 +46,7 @@ root_keys = awful.util.table.join(
 client_keys = awful.util.table.join(
     awful.key({ META }, "Escape", function(c)
         if c.class == 'Chromium' then
-            awful.util.pread('xdotool keydown --window 0 --clearmodifiers ctrl')
-            awful.util.pread('sleep 0.1')
-            awful.util.pread('xdotool key --window 0 w')
-            awful.util.pread('sleep 0.1')
-            awful.util.pread('xdotool keyup --window 0 ctrl')
+            awful.util.pread('xvkbd -xsendevent -text "\\Cw"')
             return
         end
 
