@@ -41,7 +41,7 @@ while read -rsn1 k; do
         cmd=${entries[i]}
         i=$(expr $i + 1)
         if [ "$key" = "$k" ]; then
-            ($cmd &) &
+            setsid $cmd >/dev/null 2>&1 </dev/null &
             sleep 60
             exit
         fi
