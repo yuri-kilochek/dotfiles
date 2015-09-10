@@ -41,40 +41,13 @@ root_keys = awful.util.table.join(
         local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/time')
         controller_pids[pid] = true
     end), 
+    awful.key({ META }, "s", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/screen_brightness')
+        controller_pids[pid] = true
+    end),
     awful.key({ META }, "b", function()
         local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
         controller_pids[pid] = true
-    end),
-{})
-
-local function get_backlight()
-    return tonumber(awful.util.pread(awful.util.getdir('config') .. '/backlight.sh'))
-end
-
-local function set_backlight(value)
-    awful.util.spawn(awful.util.getdir('config') .. '/backlight.sh '.. value)
-end
-
-root_keys = awful.util.table.join(root_keys,
-    awful.key({ META, SHIFT }, 'F9', function()
-        set_backlight(0)
-    end),
-    awful.key({ META }, 'F9', function()
-        local new = get_backlight() - 10
-        if new < 0 then
-            new = 0
-        end
-        set_backlight(new)
-    end),
-    awful.key({ META }, 'F10', function()
-        local new = get_backlight() + 10
-        if new > 100 then
-            new = 100
-        end
-        set_backlight(new)
-    end),
-    awful.key({ META, SHIFT }, 'F10', function()
-        set_backlight(100)
     end),
 {})
 

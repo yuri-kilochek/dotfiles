@@ -1,0 +1,69 @@
+#!/usr/bin/sh
+
+source "$(dirname $0)"/common.sh
+
+brightness=$(printf '%.0f' "$(xbacklight -get)")
+state='o'
+
+actualize() {
+    if [ "$state" = 'o' ]; then
+        b="$brightness"
+    elif [ "$state" = 'x' ]; then
+        b=0
+    fi
+    xbacklight -time 0 -set "$b"
+}
+
+decrease_by() {
+    brightness="$(echo "$brightness - $1" | bc -l)"
+    if [ "$brightness" -lt 0 ]; then
+        brightness=0
+    fi
+    actualize
+}
+
+toggle() {
+    if [ "$state" = 'o' ]; then
+        state='x'
+    elif [ "$state" = 'x' ]; then
+        state='o'
+    fi
+    actualize
+}
+
+increase_by() {
+    brightness="$(echo "$brightness + $1" | bc -l)"
+    if [ "$brightness" -gt 100 ]; then
+        brightness=100
+    fi
+    actualize
+}
+
+view() (
+    printf 'Screen Brightness:\n'
+    bar 100 "$(echo "$(xbacklight -get) / 100" | bc -l)" 'o'
+)
+
+hide_cursor
+disable_echo
+while true; do
+    move_top_left
+    reshape_and_print "$(view)" 
+    case "$(read_key)" in
+        $'\e[1;3D') # Alt+Left
+            decrease_by 1
+        ;;
+        $'\e[D') # Left
+            decrease_by 10
+        ;;
+        ' ') # Space
+            toggle
+        ;;
+        $'\e[C') # Right
+            increase_by 10
+        ;;
+        $'\e[1;3C') # Alt+Right
+            increase_by 1
+        ;;
+    esac
+done
