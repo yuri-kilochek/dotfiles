@@ -2,14 +2,13 @@
 
 source "$(dirname $0)"/common.sh
 
-state() {
+view() {
     date $'+     %B\n%Y-%m-%d %H:%M:%S\n        %A'
 }
 
 hide_cursor
 disable_echo
 while true; do
-    reshape_and_print "$(state)" 
-    sleep 0.02
-    move_top_left
+    render "$(view)" 
+    sleep 0.05
 done
