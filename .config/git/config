@@ -3,3 +3,5 @@
 	name = Yuri Kilochek
 [push]
 	default = simple
+[core]
+	editor = vim
