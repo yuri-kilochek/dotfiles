@@ -1,0 +1,66 @@
+#!/usr/bin/sh
+
+source "$(dirname $0)"/common.sh
+
+width=100
+
+thing=Master
+
+view() (
+    if [ "$thing" != Master ]; then
+        right="$thing"
+    else
+        right=
+    fi
+    A=($(amixer sget --mapped-volume "$thing" | awk -F"[]%[]" '/dB/ { print $2 " " $7 }'))
+    value=${A[0]}
+    state=${A[1]}
+    if [ $state = on ]; then
+        ts='| '
+    elif [ $state = off ]; then
+        ts='- '
+    fi
+    trialign $width '' $value% "$right"
+    printf '\n'
+    bar $width "$ts" $value
+)
+
+hide_cursor
+disable_echo
+while true; do
+    render "$(view)"
+
+    key="$(read_key 0.1)"
+    case "$key" in
+        $'\e[1;3D') # Alt+Left
+            amixer --quiet sset --mapped-volume "$thing" 1%-
+        ;;
+        $'\e[D') # Left
+            amixer --quiet sset --mapped-volume "$thing" 10%-
+        ;;
+        ' ') # Space
+            amixer --quiet sset --mapped-volume "$thing" toggle
+        ;;
+        $'\e[C') # Right
+            amixer --quiet sset --mapped-volume "$thing" 10%+
+        ;;
+        $'\e[1;3C') # Alt+Right
+            amixer --quiet sset --mapped-volume "$thing" 1%+
+        ;;
+        *)
+            if [ "$thing" = Master ]; then
+                case "$key" in
+                    's')
+                        thing=Speaker
+                    ;;
+                    'h')
+                        thing=Headphone
+                    ;;
+                    'm')
+                        thing=Mic
+                    ;;
+                esac
+            fi
+        ;;
+    esac
+done
