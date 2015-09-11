@@ -9,14 +9,14 @@ entries=(
     'f' 'File Manager'      'Thunar'
 )
 
-menu() (
+view() (
     i=0
     while [ $i -lt ${#entries[@]} ]; do
-        key=${entries[i]}
+        key="${entries[i]}"
         i=$(expr $i + 1)
-        name=${entries[i]}
+        name="${entries[i]}"
         i=$(expr $i + 1)
-        cmd=${entries[i]}
+        cmd="${entries[i]}"
         i=$(expr $i + 1)
         printf '%s - %s\n' "$key" "$name"
     done
@@ -24,21 +24,18 @@ menu() (
 
 hide_cursor
 disable_echo
-reshape_and_print "$(menu)" 
-while read -rsn1 k; do
-    read -t 0.0001 -rsn1 kk && k+=$kk
-    read -t 0.0001 -rsn1 kk && k+=$kk
-    read -t 0.0001 -rsn1 kk && k+=$kk
-    read -t 0.0001 -rsn1 kk && k+=$kk
-    read -t 0.0001 -rsn1 kk && k+=$kk
+while true; do
+    render "$(view)" 
 
+    k=$(read_key)
+    
     i=0
     while [ $i -lt ${#entries[@]} ]; do
-        key=${entries[i]}
+        key="${entries[i]}"
         i=$(expr $i + 1)
-        name=${entries[i]}
+        name="${entries[i]}"
         i=$(expr $i + 1)
-        cmd=${entries[i]}
+        cmd="${entries[i]}"
         i=$(expr $i + 1)
         if [ "$key" = "$k" ]; then
             setsid $cmd >/dev/null 2>&1 </dev/null &

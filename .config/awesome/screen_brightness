@@ -2,68 +2,31 @@
 
 source "$(dirname $0)"/common.sh
 
-brightness=$(printf '%.0f' "$(xbacklight -get)")
-state='o'
-
-actualize() {
-    if [ "$state" = 'o' ]; then
-        b="$brightness"
-    elif [ "$state" = 'x' ]; then
-        b=0
-    fi
-    xbacklight -time 0 -set "$b"
-}
-
-decrease_by() {
-    brightness="$(echo "$brightness - $1" | bc -l)"
-    if [ "$brightness" -lt 0 ]; then
-        brightness=0
-    fi
-    actualize
-}
-
-toggle() {
-    if [ "$state" = 'o' ]; then
-        state='x'
-    elif [ "$state" = 'x' ]; then
-        state='o'
-    fi
-    actualize
-}
-
-increase_by() {
-    brightness="$(echo "$brightness + $1" | bc -l)"
-    if [ "$brightness" -gt 100 ]; then
-        brightness=100
-    fi
-    actualize
-}
+width=100
 
 view() (
-    printf 'Screen Brightness:\n'
-    bar 100 "$(echo "$(xbacklight -get) / 100" | bc -l)" 'o'
+    brightness=$(printf '%.0f' "$(xbacklight -get)")
+    trialign $width '' $brightness% ''
+    printf '\n'
+    bar $width '| ' $(printf '%.0f' "$(xbacklight -get)")
 )
 
 hide_cursor
 disable_echo
 while true; do
-    move_top_left
-    reshape_and_print "$(view)" 
-    case "$(read_key)" in
+    render "$(view)" 
+    case "$(read_key 0.1)" in
         $'\e[1;3D') # Alt+Left
-            decrease_by 1
+            xbacklight -time 0 -1
         ;;
         $'\e[D') # Left
-            decrease_by 10
-        ;;
-        ' ') # Space
-            toggle
+            xbacklight -time 0 -10
         ;;
         $'\e[C') # Right
-            increase_by 10
+            xbacklight -time 0 +10
         ;;
         $'\e[1;3C') # Alt+Right
-            increase_by 1
+            xbacklight -time 0 +1
         ;;
     esac
 done
