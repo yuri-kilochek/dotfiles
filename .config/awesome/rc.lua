@@ -18,12 +18,15 @@ end
 local beautiful = require("beautiful")
 beautiful.init("~/.config/awesome/theme.lua")
 
+local gears = require("gears")
 local awful = require("awful")
 
 ALT = "Mod1"
 META = "Mod4"
 CTRL = "Control"
 SHIFT = "Shift"
+
+gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 1)
 
 awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
 
