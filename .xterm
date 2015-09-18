@@ -6,6 +6,9 @@ XTerm*foreground: #EEEEEE
 ! enable cursor blinking
 XTerm*cursorBlink: true
 
+! 
+XTerm*selectToClipboard: true
+
 ! enable UTF-8
 XTerm*locale: true
 
