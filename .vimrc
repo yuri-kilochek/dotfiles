@@ -54,3 +54,5 @@ set t_vb=
 set nobackup
 set nowritebackup
 
+" use X clipboard as yank buffer
+set clipboard=unnamedplus
