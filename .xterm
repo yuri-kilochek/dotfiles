@@ -14,7 +14,7 @@ XTerm*locale: true
 
 ! use TrueType Font
 XTerm*faceName: Sans Mono 
-XTerm*faceSize: 10
+XTerm*faceSize: 12
 
 ! set huge scroll buffer size
 XTerm*saveLines: 16384
