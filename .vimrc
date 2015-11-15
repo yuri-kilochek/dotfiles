@@ -56,3 +56,6 @@ set nowritebackup
 
 " use X clipboard as yank buffer
 set clipboard=unnamedplus
+
+" set netrw to tree view by default
+let g:netrw_liststyle=3
