@@ -59,3 +59,9 @@ set clipboard=unnamedplus
 
 " set netrw to tree view by default
 let g:netrw_liststyle=3
+
+" enable russin layout
+set keymap=russian-jcukenwin
+set iminsert=0
+set imsearch=0
+
