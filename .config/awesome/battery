@@ -23,7 +23,7 @@ view() (
     elif [ "$status" = 'Discharging' ]; then
         left=$period
         right=''
-        ts='[ '
+        ts='< '
     elif [ "$status" = 'Charging' ]; then
         left=
         if [ $period = 'charging' ]; then
@@ -31,7 +31,7 @@ view() (
         else
             right=$period
         fi
-        ts='] '
+        ts='> '
     fi
     trialign $width "$left" $amount% "$right"
     printf '\n'
