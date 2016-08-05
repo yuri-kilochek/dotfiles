@@ -115,6 +115,9 @@ client_buttons = awful.util.table.join(
     awful.button({}, 1, function(c)
         client.focus = c
     end),
+    awful.button({}, 2, function(c)
+        client.focus = c
+    end),
     awful.button({}, 3, function(c)
         client.focus = c
     end),
