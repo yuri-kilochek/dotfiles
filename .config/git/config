@@ -5,3 +5,12 @@
 	default = simple
 [core]
 	editor = vim
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[merge]
+	tool = vimdiff
+	conflicstyle = diff3
+[mergetool]
+	prompt = false
