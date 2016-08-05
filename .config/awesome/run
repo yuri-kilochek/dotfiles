@@ -7,6 +7,8 @@ entries=(
     'b' 'Browser'           'chromium'
     'B' 'Incognito Browser' 'chromium --incognito'
     'f' 'File Manager'      'Thunar'
+    'c' 'HipChat'           'hipchat4'
+    'p' 'Pinta'             'pinta'
 )
 
 view() (
