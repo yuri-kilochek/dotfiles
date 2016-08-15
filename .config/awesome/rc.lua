@@ -29,8 +29,6 @@ SHIFT = "Shift"
 gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 1)
 gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 2)
 
-awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
-
 local controller_pids = {}
 
 root_keys = awful.util.table.join(
@@ -65,14 +63,16 @@ client_keys = awful.util.table.join(
     end),
 {})
 
-for i = 1, #awful.tag.gettags(1) do
+for s = 1, screen.count() do
+    awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, s, awful.layout.suit.tile)
+
     root_keys = awful.util.table.join(root_keys,
         awful.key({ META }, tostring(i), function()
-            local t = awful.tag.gettags(1)[i]
+            local t = awful.tag.gettags(s)[i]
             awful.tag.viewonly(t)
             local i = 0
             while true do
-                local c = awful.client.focus.history.get(1, i)
+                local c = awful.client.focus.history.get(s, i)
                 if c == nil then
                     return
                 end
@@ -86,9 +86,10 @@ for i = 1, #awful.tag.gettags(1) do
             end
         end),
     {})
+
     client_keys = awful.util.table.join(client_keys,
         awful.key({ META, ALT }, tostring(i), function(c)
-            local t = awful.tag.gettags(1)[i]
+            local t = awful.tag.gettags(s)[i]
             awful.tag.viewonly(t)
             awful.client.movetotag(t, c)
             client.focus = c
@@ -216,8 +217,8 @@ client.connect_signal('untagged', function(c, t)
     end
 
     -- focus previous client in focus history that is in this tag
-    for i = 0, #client.get(1) - 1 do
-        local c = awful.client.focus.history.get(1, i)
+    for i = 0, #client.get(c.screen) - 1 do
+        local c = awful.client.focus.history.get(c.screen, i)
         for _, cc in ipairs(tcs) do
             if cc == c then
                 client.focus = c
