@@ -27,6 +27,7 @@ CTRL = "Control"
 SHIFT = "Shift"
 
 gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 1)
+gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 2)
 
 awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
 
@@ -103,10 +104,10 @@ for key, direction in pairs{
 } do
     client_keys = awful.util.table.join(client_keys,
         awful.key({ META }, key, function(c)
-            awful.client.focus.bydirection(direction, c)
+            awful.client.focus.global_bydirection(direction, c)
         end),
         awful.key({ META, ALT }, key, function(c)
-            awful.client.swap.bydirection(direction, c)
+            awful.client.swap.global_bydirection(direction, c)
         end),
     {})
 end
