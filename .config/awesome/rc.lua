@@ -66,35 +66,37 @@ client_keys = awful.util.table.join(
 for s = 1, screen.count() do
     awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, s, awful.layout.suit.tile)
 
-    root_keys = awful.util.table.join(root_keys,
-        awful.key({ META }, tostring(i), function()
-            local t = awful.tag.gettags(s)[i]
-            awful.tag.viewonly(t)
-            local i = 0
-            while true do
-                local c = awful.client.focus.history.get(s, i)
-                if c == nil then
-                    return
-                end
-                for _, tt in ipairs(c:tags()) do
-                    if t == tt then
-                        client.focus = c
+    for i = 1, #awful.tag.gettags(s) do
+        root_keys = awful.util.table.join(root_keys,
+            awful.key({ META }, tostring(i), function()
+                local t = awful.tag.gettags(s)[i]
+                awful.tag.viewonly(t)
+                local i = 0
+                while true do
+                    local c = awful.client.focus.history.get(s, i)
+                    if c == nil then
                         return
                     end
+                    for _, tt in ipairs(c:tags()) do
+                        if t == tt then
+                            client.focus = c
+                            return
+                        end
+                    end
+                    i = i + 1
                 end
-                i = i + 1
-            end
-        end),
-    {})
+            end),
+        {})
 
-    client_keys = awful.util.table.join(client_keys,
-        awful.key({ META, ALT }, tostring(i), function(c)
-            local t = awful.tag.gettags(s)[i]
-            awful.tag.viewonly(t)
-            awful.client.movetotag(t, c)
-            client.focus = c
-        end),
-    {})
+        client_keys = awful.util.table.join(client_keys,
+            awful.key({ META, ALT }, tostring(i), function(c)
+                local t = awful.tag.gettags(s)[i]
+                awful.tag.viewonly(t)
+                awful.client.movetotag(t, c)
+                client.focus = c
+            end),
+        {})
+    end
 end
 
 for key, direction in pairs{
