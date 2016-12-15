@@ -14,6 +14,8 @@ fi
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 [[ -f ~/.xterm ]] && xrdb -merge ~/.xterm
 
+export LANG=en_US.UTF-8
+
 /usr/bin/xscreensaver -no-splash &
 
 kbdd
