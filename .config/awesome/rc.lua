@@ -63,7 +63,7 @@ root_keys = awful.util.table.join(
 
 client_keys = awful.util.table.join(
     awful.key({ META }, "Escape", function(c)
-        if c.class == 'chromium' then
+        if c.class == 'chromium' or c.class == 'Chromium' then
             awful.util.pread('xvkbd -xsendevent -text "\\Cw"')
             return
         end
