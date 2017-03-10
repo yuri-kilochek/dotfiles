@@ -26,6 +26,9 @@ syntax enable
 " highlight cursor line
 set cursorline
 
+" max line length indicator
+set colorcolumn=80
+
 " convert tabs to spaces
 set expandtab
 set tabstop=4
