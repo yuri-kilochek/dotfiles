@@ -18,6 +18,8 @@ export LANG=en_US.UTF-8
 
 /usr/bin/xscreensaver -no-splash &
 
+setxkbmap -layout "us,ru" -option "grp:caps_toggle"
+
 kbdd
 
 exec awesome
