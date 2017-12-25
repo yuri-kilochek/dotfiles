@@ -16,6 +16,8 @@ xrandr --output DVI-I-1 --auto --right-of HDMI-0 --output HDMI-0 --auto
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 [[ -f ~/.xterm ]] && xrdb -merge ~/.xterm
 
+compton -bCG
+
 /usr/bin/xscreensaver -no-splash &
 
 setxkbmap -layout "us,ru" -option "grp:caps_toggle"
