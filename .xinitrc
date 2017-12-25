@@ -16,8 +16,8 @@ fi
 
 export LANG=en_US.UTF-8
 
-setxkbmap -layout "us,ru" -option "grp:caps_toggle"
+compton -bCG
 
-kbdd
+setxkbmap -layout "us,ru" -option "grp:caps_toggle"
 
 exec awesome
