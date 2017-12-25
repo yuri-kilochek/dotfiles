@@ -18,8 +18,6 @@ xrandr --output DVI-I-1 --auto --right-of HDMI-0 --output HDMI-0 --auto
 
 /usr/bin/xscreensaver -no-splash &
 
-kbdd
-
 setxkbmap -layout "us,ru" -option "grp:caps_toggle"
 
 exec awesome
