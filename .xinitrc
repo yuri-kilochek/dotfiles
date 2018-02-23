@@ -16,6 +16,8 @@ fi
 
 export LANG=en_US.UTF-8
 
+xscreensaver -no-splash &
+
 compton -bCG
 
 setxkbmap -layout "us,ru" -option "grp:caps_toggle"
