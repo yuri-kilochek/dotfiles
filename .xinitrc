@@ -18,7 +18,7 @@ export LANG=en_US.UTF-8
 
 xscreensaver -no-splash &
 
-compton -bCG
+compton -bCG --backend glx --vsync opengl-swc
 
 setxkbmap -layout "us,ru" -option "grp:caps_toggle"
 
