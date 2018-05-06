@@ -12,7 +12,7 @@ view() (
     else
         right=
     fi
-    A=($(amixer sget --mapped-volume "$thing" | awk -F"[]%[]" '/dB/ { print $2 " " $7 }'))
+    A=($(amixer sget --mapped-volume "$thing" | grep -m1 -oP '\[.*\]' | tr -d '%\[\]'))
     value=${A[0]}
     state=${A[1]}
     if [ $state = on ]; then
