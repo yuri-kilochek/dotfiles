@@ -51,6 +51,9 @@ root_keys = awful.util.table.join(
     awful.key({}, "XF86AudioMute", function()
         awful.util.spawn('amixer --quiet sset --mapped-volume Master toggle')
     end),
+    awful.key({ META }, "c", function()
+        awful.util.spawn_with_shell('sleep 0.1; scrot -s -e \'xclip -selection clipboard -t image/png $f; rm $f\'')
+    end),
 {})
 
 client_keys = awful.util.table.join(
