@@ -55,6 +55,9 @@ root_keys = awful.util.table.join(
         local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
         controller_pids[pid] = true
     end),
+    awful.key({ META }, "c", function()
+        awful.util.spawn_with_shell('sleep 0.1; scrot -s -e \'xclip -selection clipboard -t image/png $f; rm $f\'')
+    end),
 {})
 
 client_keys = awful.util.table.join(
