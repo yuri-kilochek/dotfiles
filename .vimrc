@@ -1,5 +1,21 @@
 " disable compatibility with Vi
-set nocompatible
+if &compatible
+    set nocompatible
+endif
+
+" dein plugin managemenr
+if dein#load_state('~/.local/share/dein')
+    call dein#begin('~/.local/share/dein')
+
+    call dein#add('hdima/python-syntax')
+    call dein#add('tomasr/molokai')
+    call dein#add('tpope/vim-vinegar')
+    call dein#add('tpope/vim-eunuch')
+    call dein#add('terryma/vim-multiple-cursors')
+
+    call dein#end()
+    call dein#save_state()
+endif
 
 " make backspace work
 set backspace=indent,eol,start

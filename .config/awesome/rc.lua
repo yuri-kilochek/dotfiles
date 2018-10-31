@@ -70,6 +70,10 @@ client_keys = awful.util.table.join(
 
         c:kill()
     end),
+    awful.key({ META }, "Shift_R", function(c)
+        c.below = c.floating
+        c.floating = not c.floating
+    end),
 {})
 
 for i = 1, #awful.tag.gettags(1) do
@@ -139,6 +143,7 @@ client.connect_signal('manage', function(c, startup)
     local keys = client_keys
     local buttons = client_buttons
 
+    c.foo = 'kek'
     if controller_pids[c.pid] then
         controller_pids[c.pid] = nil
         

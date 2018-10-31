@@ -47,20 +47,17 @@ while true; do
         $'\e[1;3C') # Alt+Right
             amixer --quiet sset --mapped-volume "$thing" 1%+
         ;;
-        *)
-            if [ "$thing" = Master ]; then
-                case "$key" in
-                    's')
-                        thing=Speaker
-                    ;;
-                    'h')
-                        thing=Headphone
-                    ;;
-                    'm')
-                        thing=Mic
-                    ;;
-                esac
-            fi
+        'a')
+            thing=Master
+        ;;
+        's')
+            thing=Speaker
+        ;;
+        'h')
+            thing=Headphone
+        ;;
+        'm')
+            thing=Mic
         ;;
     esac
 done

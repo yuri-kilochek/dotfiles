@@ -12,9 +12,8 @@ XTerm*selectToClipboard: true
 ! enable UTF-8
 XTerm*locale: true
 
-! resize font
-XTerm*initialFont: 6
+! set font
+XTerm*font: -*-Unifont-*-*-*-*-*-160-*-*-*-*-*-*
 
 ! set huge scroll buffer size
 XTerm*saveLines: 16384
-
