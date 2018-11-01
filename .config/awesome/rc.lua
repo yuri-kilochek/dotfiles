@@ -143,7 +143,6 @@ client.connect_signal('manage', function(c, startup)
     local keys = client_keys
     local buttons = client_buttons
 
-    c.foo = 'kek'
     if controller_pids[c.pid] then
         controller_pids[c.pid] = nil
         
