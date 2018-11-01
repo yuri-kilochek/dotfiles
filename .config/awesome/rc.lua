@@ -73,7 +73,7 @@ client_keys = awful.util.table.join(
 {})
 
 for s = 1, screen.count() do
-    gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', s)
+    gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper'.. tostring(s) .. '.jpg', s)
 
     awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, s, awful.layout.suit.tile)
 
