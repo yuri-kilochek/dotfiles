@@ -29,6 +29,8 @@ fi
 
 xrdb -merge $HOME/.config/xtermrc
 
+numlockx &
+
 xscreensaver -no-splash &
 xss-lock -- xscreensaver-command --lock &
 
