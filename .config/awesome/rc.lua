@@ -47,6 +47,14 @@ root_keys = awful.util.table.join(
     awful.key({}, "XF86AudioMute", function()
         awful.util.spawn('amixer --quiet sset --mapped-volume Master toggle')
     end),
+    awful.key({ META }, "s", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/screen_brightness')
+        controller_pids[pid] = true
+    end),
+    awful.key({ META }, "b", function()
+        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
+        controller_pids[pid] = true
+    end),
 {})
 
 client_keys = awful.util.table.join(
