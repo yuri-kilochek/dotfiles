@@ -26,10 +26,6 @@ META = "Mod4"
 CTRL = "Control"
 SHIFT = "Shift"
 
-gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', 1)
-
-awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, 1, awful.layout.suit.tile)
-
 local controller_pids = {}
 
 root_keys = awful.util.table.join(
@@ -51,14 +47,6 @@ root_keys = awful.util.table.join(
     awful.key({}, "XF86AudioMute", function()
         awful.util.spawn('amixer --quiet sset --mapped-volume Master toggle')
     end),
-    awful.key({ META }, "s", function()
-        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/screen_brightness')
-        controller_pids[pid] = true
-    end),
-    awful.key({ META }, "b", function()
-        local pid = awful.util.spawn('xterm -e ' .. awful.util.getdir('config') .. '/battery')
-        controller_pids[pid] = true
-    end),
 {})
 
 client_keys = awful.util.table.join(
@@ -76,35 +64,42 @@ client_keys = awful.util.table.join(
     end),
 {})
 
-for i = 1, #awful.tag.gettags(1) do
-    root_keys = awful.util.table.join(root_keys,
-        awful.key({ META }, tostring(i), function()
-            local t = awful.tag.gettags(1)[i]
-            awful.tag.viewonly(t)
-            local i = 0
-            while true do
-                local c = awful.client.focus.history.get(1, i)
-                if c == nil then
-                    return
-                end
-                for _, tt in ipairs(c:tags()) do
-                    if t == tt then
-                        client.focus = c
+for s = 1, screen.count() do
+    gears.wallpaper.fit(awful.util.getdir('config') .. '/wallpaper.jpg', s)
+
+    awful.tag({'1', '2', '3', '4', '5', '6', '7', '8', '9'}, s, awful.layout.suit.tile)
+
+    for i = 1, #awful.tag.gettags(s) do
+        root_keys = awful.util.table.join(root_keys,
+            awful.key({ META }, tostring(i), function()
+                local t = awful.tag.gettags(s)[i]
+                awful.tag.viewonly(t)
+                local i = 0
+                while true do
+                    local c = awful.client.focus.history.get(s, i)
+                    if c == nil then
                         return
                     end
+                    for _, tt in ipairs(c:tags()) do
+                        if t == tt then
+                            client.focus = c
+                            return
+                        end
+                    end
+                    i = i + 1
                 end
-                i = i + 1
-            end
-        end),
-    {})
-    client_keys = awful.util.table.join(client_keys,
-        awful.key({ META, ALT }, tostring(i), function(c)
-            local t = awful.tag.gettags(1)[i]
-            awful.tag.viewonly(t)
-            awful.client.movetotag(t, c)
-            client.focus = c
-        end),
-    {})
+            end),
+        {})
+
+        client_keys = awful.util.table.join(client_keys,
+            awful.key({ META, ALT }, tostring(i), function(c)
+                local t = awful.tag.gettags(s)[i]
+                awful.tag.viewonly(t)
+                awful.client.movetotag(t, c)
+                client.focus = c
+            end),
+        {})
+    end
 end
 
 for key, direction in pairs{
@@ -115,10 +110,10 @@ for key, direction in pairs{
 } do
     client_keys = awful.util.table.join(client_keys,
         awful.key({ META }, key, function(c)
-            awful.client.focus.bydirection(direction, c)
+            awful.client.focus.global_bydirection(direction, c)
         end),
         awful.key({ META, ALT }, key, function(c)
-            awful.client.swap.bydirection(direction, c)
+            awful.client.swap.global_bydirection(direction, c)
         end),
     {})
 end
@@ -227,8 +222,8 @@ client.connect_signal('untagged', function(c, t)
     end
 
     -- focus previous client in focus history that is in this tag
-    for i = 0, #client.get(1) - 1 do
-        local c = awful.client.focus.history.get(1, i)
+    for i = 0, #client.get(c.screen) - 1 do
+        local c = awful.client.focus.history.get(c.screen, i)
         for _, cc in ipairs(tcs) do
             if cc == c then
                 client.focus = c
