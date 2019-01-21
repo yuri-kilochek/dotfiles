@@ -6,7 +6,7 @@ if status --is-login
 end
 
 function __drop_prompt
-    for _ in (seq 100)
+    for i in (seq 100)
         echo
     end
 end
