@@ -12,6 +12,7 @@ if dein#load_state('~/.local/share/dein')
     call dein#add('tpope/vim-vinegar')
     call dein#add('tpope/vim-eunuch')
     call dein#add('terryma/vim-multiple-cursors')
+    call dein#add('bogado/file-line')
 
     call dein#end()
     call dein#save_state()
