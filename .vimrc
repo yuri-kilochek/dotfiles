@@ -88,3 +88,5 @@ set imsearch=0
 " highlight search results
 set hlsearch
 
+" raise limit on the number of simultaneously open tabs
+set tabpagemax=100
