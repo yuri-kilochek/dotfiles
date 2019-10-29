@@ -29,6 +29,8 @@ fi
 
 xrdb -merge $HOME/.config/xtermrc
 
+setxkbmap -model pc105 -layout us,ru -option grp:caps_toggle,grp_led:caps
+
 numlockx &
 
 xscreensaver -no-splash &
