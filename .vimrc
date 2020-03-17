@@ -13,6 +13,7 @@ if dein#load_state('~/.local/share/dein')
     call dein#add('tpope/vim-eunuch')
     call dein#add('terryma/vim-multiple-cursors')
     call dein#add('bogado/file-line')
+    call dein#add('ycm-core/YouCompleteMe', {'build': './install.py'})
 
     call dein#end()
     call dein#save_state()
@@ -90,3 +91,10 @@ set hlsearch
 
 " raise limit on the number of simultaneously open tabs
 set tabpagemax=100
+
+" Let clangd fully control code completion
+let g:ycm_clangd_uses_ycmd_caching = 0
+let g:ycm_clangd_args = [
+\    '--background-index',
+\    '-j='.substitute(system('nproc'), '\n', '', ''),
+\]
